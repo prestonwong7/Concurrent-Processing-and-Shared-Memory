@@ -3,10 +3,11 @@
 // Eating --> Get rid of most significant bit
 // Use shared memory for fish and pellet position only
 #include <stdio.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <signal.h>
+
+#define SHM_SIZE 30;
 
 void handler(int num) {
 	perror("Interrupt signal is pressed!! \n");
@@ -22,6 +23,16 @@ int main() {
 
 	key_t key;
 	int shmid;
+	char *shm;
+
+	key = ftok("SwimMill.c", 'b'); //generate random key
+	shmid = shmget(key, 1024, IPC_CREAT|0660);
+	if (shmid < 0) {
+		perror("shmget");
+		exit(1);
+	}
+	shm = shmat(shmid, NULL, 0);
+	shm = 1;
 
 	int row = 10;
 	int column = 10;
@@ -37,16 +48,16 @@ void dropPellet(int pellet, int positionY) {
 	positionY++;
 }
 
-void travelToPellet(int fish) {
-	if (fish.positionX > pellet.positionX) {
-		fish.positionX--;
-	}
-	else if (fish.positionX < pellet.positionX) {
-		fish.positionX++;
-	}
-	else{
-	}
-}
+// void travelToPellet(int fish) {
+// 	if (fishPositionX > pellet.positionX) {
+// 		fish.positionX--;
+// 	}
+// 	else if (fish.positionX < pellet.positionX) {
+// 		fish.positionX++;
+// 	}
+// 	else{
+// 	}
+// }
 
 void eaten(int fish){
 	if (fish  == 10) {

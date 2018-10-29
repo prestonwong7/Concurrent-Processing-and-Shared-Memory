@@ -5,7 +5,10 @@
 #include <stdio.h>
 
 int main() {
-
+  while(1){
+    // Move fish
+    
+  }
   return 0;
 }
 
