@@ -24,12 +24,17 @@ void handler(int num) {
 	 3. Do operations
 	 4. Detach using shmdt
 */
+
+void dropPellet();
+
 int main() {
 	signal(SIGINT, handler);
 
 	key_t key;
 	int shmid;
 	int *shm;
+
+	dropPellet();
 
 	key = ftok("SwimMill.c", 'b'); //generate random key
 	shmid = shmget(key, SHM_SIZE, IPC_CREAT|0666);
@@ -44,8 +49,6 @@ int main() {
 	}
 
 
-	// shm[5] = 1;
-
 	int row = 10;
 	int column = 10;
 	char stream[row][column]; //2D Dimensional array, fish can only move last row of 2d
@@ -53,19 +56,28 @@ int main() {
 	int fishPositionX = 5; // Moves last row, in the column, so (10,0)
 	int numberOfPellets[20] = {0}; // Create array
 
+	int random = 0;
+	random = rand() % 9 + 90; // random number from 90-99
+	printf("%d \n", random );
+
+
 	//Printing out grid
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
 				stream[i][j] = '~';
+				printf("%c ", '~' );
 		}
+		printf("\n");
 	}
 
+	shmdt(shm);
+	shmctl(shmid, IPC_RMID, NULL);
 	getchar(); // Pause consol
 	return 0;
 }
 
-void dropPellet(int pellet, int positionY) {
-	positionY++;
+void dropPellet() {
+	printf("hello");
 }
 
 // void travelToPellet(int fish) {

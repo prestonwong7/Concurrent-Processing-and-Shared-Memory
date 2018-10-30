@@ -11,7 +11,7 @@ int main() {
   int *shm = (int*) shmat(shmid, NULL, 0);
 
   int column = 0;
-  column = rand() % 99 + 90; // random number from 90-99
+  column = rand() % 9 + 0; // random number from 0 - 9
   printf(column);
   shm[1] = column;
 
