@@ -1,23 +1,31 @@
 // Multiple pellets
-//Process ID, position, eaten/missed
+//Process ID, position, eaten/misse
 #include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 
+void handler(int);
 void eatPellet();
 void missPellet();
 
-int main() {
+int main(int argc, char* argv[]) {
+  signal(SIGINT, handler);
+
   key_t key = ftok("SwimMill.c", 'b');
   int shmid = shmget(key, 1024, IPC_CREAT|0666);
-  int *shm = (int*) shmat(shmid, NULL, 0);
+  int *shm = shmat(shmid, NULL, 0);
 
   int i = 1; // 1 - 19 are pellets
+  printf("%d \n", shm[1]);
   for (; i < 20; i++) {
-    int pelletPosition = rand() % 9 + 0; // random number from 0 - 9
-    shm[i] = pelletPosition;
+    int pelletPosition = rand() % 9 ; // random number from 0 - 9
+    if (shm[i] == -1){
+      printf("hello %d \n", pelletPosition);
+      shm[i] = pelletPosition;
+    }
     break;
   }
   while(1) {
@@ -53,4 +61,9 @@ void eatPellet() {
 void missPellet() {
   printf("Pellet missed");
   printf("PID: %d \n", getpid());
+}
+
+void handler(int num) {
+	// perror(" Interrupt signal is pressed!! \n");
+	exit(1);
 }

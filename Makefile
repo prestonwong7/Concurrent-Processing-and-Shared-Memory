@@ -1,12 +1,10 @@
-NAME = Swim
+all: SwimMill.o Fish.o Pellets.o
 
-all: SwimMill Fish Pellets
+SwimMill.o: SwimMill.c
+	gcc -o SwimMill SwimMill.c -I -lm.
 
-SwimMill: SwimMill.c
-	gcc -o SwimMill SwimMill.c -I
+Fish.o: Fish.c
+	gcc -o Fish Fish.c -lm -I.
 
-Fish: Fish.c
-	gcc -o Fish Fish.c -lm 
-
-Pellets: Pellets.c
-	gcc -o Pellets Pellets.c 
+Pellets.o: Pellets.c
+	gcc -o Pellets Pellets.c -I -lm.

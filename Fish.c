@@ -7,19 +7,25 @@
 #include <sys/shm.h>
 #include <math.h>
 #include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
 
+void handler(int);
 int findClosestPellet(int*);
 void moveLeft(int, int*);
 void moveRight(int, int*);
 
-int main() {
+int main(int argc, char* argv[]) {
+  printf("printing from fish");
+  signal(SIGINT, handler); // To allow ^C
+
   key_t key = ftok("SwimMill.c", 'b');
   int shmid = shmget(key, 1024, IPC_CREAT|0666);
-  int *shm = (int*) shmat(shmid, NULL, 0);
+  int *shm = shmat(shmid, NULL, 0);
 
   int fish = 94; // Middle position
-  shm[0] = fish; // Store first shared memory space to fish
-  int columnToMoveTo = 0;
+  shm[0] = fish; // Store first shared memor space to fish
+
   while(1) {
     int closestPellet = shm[findClosestPellet(shm)];
     if ((closestPellet % 10) > (fish % 10) ) {
@@ -37,15 +43,14 @@ int main() {
 int findClosestPellet(int* shm) {
   // Using distance formula to find closest pellet
   // (x2 - x1)^2 + (y2 - y1)^2
+
   int closestPellet = 0;
   int distance[20] = {0}; // Distance of all 20 pellets
   int minimumDistance = 0;
-  // shm[1] = 11;
-  // shm[2] = 14;
-  // shm[3] = 10;
-  // shm[4] = 55;
+
   int x2 =  shm[0] % 10;
   int y2 = shm[0] / 10;
+
   for (int i = 1; i < 20; i++) {
     int x1 = shm[i] % 10;
     int y1 = shm[i] / 10;
@@ -68,7 +73,7 @@ void moveLeft(int fish, int* shm) {
   }
   else{
     fish--;
-    shm[0]--;
+    shm[0]--; //Decremening column
   }
 }
 
@@ -79,4 +84,9 @@ void moveRight(int fish, int* shm) {
     fish++;
     shm[0]++;
   }
+}
+
+void handler(int num) {
+	// perror(" Interrupt signal is pressed!! \n");
+	exit(1);
 }

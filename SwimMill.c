@@ -24,17 +24,20 @@ TODO: SwimMIll FIRST, draw and get everything working
 */
 
 void printGrid(int*);
-void handler(int );
+void handler(int);
 
-int main() {
-	signal(SIGINT, handler);
+int main(int argc, char* argv[]) {
 
 	key_t key;
 	int shmid;
 	int *shm;
 	int timer = 0;
+	int fish = 0;
+	int pellet[20];
 
-	key = ftok("SwimMill.c", 'b'); //generate random key
+	signal(SIGINT, handler);
+
+	key = ftok("SwimMill.c", 'b'); //generate random ke
 	shmid = shmget(key, SHM_SIZE, IPC_CREAT|0666);
 	shm = shmat(shmid, NULL, 0); // Attach
 
@@ -43,13 +46,43 @@ int main() {
 		shm[i] = -1;
 	}
 
+	int index = 1;
+	fish = fork();
+	
+	if (fish == -1) {
+		perror("Fish fork failed");
+		exit(1);
+	}	else if (fish == 0) {
+		execv("Fish", argv);
+		perror("Fish exec failed");
+		exit(1);
+	}
+
 	while(timer <= 30){
+		pellet[index] = fork();
+		if (pellet[index] == -1) {
+			perror("Pellet Fork failed");
+			exit(1);
+		}	else if (pellet[index] == 0) {
+			execv("Pellets", argv);
+			perror("Pellets Fork failed");
+			exit(1);
+		}
 		sleep(1); // Slow process down
 		printGrid(shm);
 		printf("\n");
+
 		timer++;
+		index++;
+
 	}
 
+	kill(fish,SIGUSR1);
+	for(int i = 0; i < 20; i++) {
+		kill(pellet[index], SIGUSR1);
+	}
+
+	sleep(10);
 	shmdt(shm);
 	shmctl(shmid, IPC_RMID, NULL);
 	printf("Program finished! \n");
@@ -70,14 +103,15 @@ void printGrid(int* shm) {
 		}
 	}
 
-	//Printing out grid with fish and pellet
+	//Printing out grid with fish and
+	// printf("Shm2 is: %d \n", shm[1] );
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
-			stream[i][j] = '~'; // water
-			for (int k = 0; k < 20; k++) {
+			// stream[i][j] = '~'; // water
+			for (int k = 1; k < 20; k++) {
 				stream[shm[k]/10][shm[k]%10] = 'O'; // pellets
-				stream[shm[0]/10][shm[0]%10] = 'Y'; // Fish
 			}
+			stream[shm[0]/10][shm[0]%10] = 'Y'; // Fish
 			printf("%c ", stream[i][j]	 );
 		}
 		printf("\n");
