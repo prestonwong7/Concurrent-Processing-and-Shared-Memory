@@ -14,18 +14,15 @@
 /*
 TODO: SwimMIll FIRST, draw and get everything working
 */
-void handler(int num) {
-	perror("Interrupt signal is pressed!! \n");
-	exit(1);
-}
 
 /* 1. Create share memory using shmget
-	 2. Attach to shared memory using shmat
-	 3. Do operations
-	 4. Detach using shmdt
+2. Attach to shared memory using shmat
+3. Do operations
+4. Detach using shmdt
 */
 
-void dropPellet();
+void printGrid(int*);
+void handler(int );
 
 int main() {
 	signal(SIGINT, handler);
@@ -34,41 +31,16 @@ int main() {
 	int shmid;
 	int *shm;
 
-	dropPellet();
-
 	key = ftok("SwimMill.c", 'b'); //generate random key
 	shmid = shmget(key, SHM_SIZE, IPC_CREAT|0666);
 	shm = shmat(shmid, NULL, 0); // Attach
-	// SHM like an array, from 0 - 99
-	// 90 - 99 is for fish
-	// 0 - 9 is for pellet
 
-	 // Initializing the shared memory to prevent segmentation fault
+	// Initializing the shared memory to prevent segmentation fault
 	for (int i = 0; i < SHM_SIZE; i++){
 		shm[i] = -1;
 	}
 
-
-	int row = 10;
-	int column = 10;
-	char stream[row][column]; //2D Dimensional array, fish can only move last row of 2d
-	int fish = 0;
-	int fishPositionX = 5; // Moves last row, in the column, so (10,0)
-	int numberOfPellets[20] = {0}; // Create array
-
-	int random = 0;
-	random = rand() % 9 + 90; // random number from 90-99
-	printf("%d \n", random );
-
-
-	//Printing out grid
-	for (int i = 0; i < row; i++) {
-		for (int j = 0; j < column; j++) {
-				stream[i][j] = '~';
-				printf("%c ", '~' );
-		}
-		printf("\n");
-	}
+	printGrid(shm);
 
 	shmdt(shm);
 	shmctl(shmid, IPC_RMID, NULL);
@@ -76,23 +48,32 @@ int main() {
 	return 0;
 }
 
-void dropPellet() {
-	printf("hello");
+void printGrid(int* shm) {
+	int row = 10;
+	int column = 10;
+	char stream[row][column]; //2D Dimensional array, fish can only move last row of 2d
+
+	//Initializing grid first
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < column; j++) {
+			stream[i][j] = '~';
+		}
+	}
+
+	int fishRow = shm[0] / 10;
+	int fishColumn = shm[0] % 10;
+	//Printing out grid with fish and pellet
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < column; j++) {
+			stream[i][j] = '~';
+			printf("%c ", stream[i][j]	 );
+		}
+		printf("\n");
+	}
+
 }
 
-// void travelToPellet(int fish) {
-// 	if (fishPositionX > pellet.positionX) {
-// 		fish.positionX--;
-// 	}
-// 	else if (fish.positionX < pellet.positionX) {
-// 		fish.positionX++;
-// 	}
-// 	else{
-// 	}
-// }
-
-void eaten(int fish){
-	if (fish  == 10) {
-
-	}
+void handler(int num) {
+	perror("Interrupt signal is pressed!! \n");
+	exit(1);
 }
