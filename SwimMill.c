@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 #define SHM_SIZE 1000
 
@@ -30,6 +32,7 @@ int main() {
 	key_t key;
 	int shmid;
 	int *shm;
+	int timer = 0;
 
 	key = ftok("SwimMill.c", 'b'); //generate random key
 	shmid = shmget(key, SHM_SIZE, IPC_CREAT|0666);
@@ -40,10 +43,16 @@ int main() {
 		shm[i] = -1;
 	}
 
-	printGrid(shm);
+	while(timer <= 30){
+		sleep(1); // Slow process down
+		printGrid(shm);
+		printf("\n");
+		timer++;
+	}
 
 	shmdt(shm);
 	shmctl(shmid, IPC_RMID, NULL);
+	printf("Program finished! \n");
 	getchar(); // Pause consol
 	return 0;
 }
@@ -53,6 +62,7 @@ void printGrid(int* shm) {
 	int column = 10;
 	char stream[row][column]; //2D Dimensional array, fish can only move last row of 2d
 
+
 	//Initializing grid first
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
@@ -60,12 +70,14 @@ void printGrid(int* shm) {
 		}
 	}
 
-	int fishRow = shm[0] / 10;
-	int fishColumn = shm[0] % 10;
 	//Printing out grid with fish and pellet
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
-			stream[i][j] = '~';
+			stream[i][j] = '~'; // water
+			for (int k = 0; k < 20; k++) {
+				stream[shm[k]/10][shm[k]%10] = 'O'; // pellets
+				stream[shm[0]/10][shm[0]%10] = 'Y'; // Fish
+			}
 			printf("%c ", stream[i][j]	 );
 		}
 		printf("\n");
@@ -74,6 +86,6 @@ void printGrid(int* shm) {
 }
 
 void handler(int num) {
-	perror("Interrupt signal is pressed!! \n");
+	perror(" Interrupt signal is pressed!! \n");
 	exit(1);
 }
