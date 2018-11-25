@@ -9,6 +9,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
+#include "include.h"
+
+#define SHM_SIZE 1000
 
 void handler(int);
 int findClosestPellet(int*);
@@ -16,12 +19,9 @@ void moveLeft(int, int*);
 void moveRight(int, int*);
 
 int main(int argc, char* argv[]) {
-  printf("printing from fish");
   signal(SIGINT, handler); // To allow ^C
 
-  key_t key = ftok("SwimMill.c", 'b');
-  int shmid = shmget(key, 1024, IPC_CREAT|0666);
-  int *shm = shmat(shmid, NULL, 0);
+  attachSharedMemory();
 
   int fish = 94; // Middle position
   shm[0] = fish; // Store first shared memor space to fish
@@ -30,10 +30,16 @@ int main(int argc, char* argv[]) {
     int closestPellet = shm[findClosestPellet(shm)];
     if ((closestPellet % 10) > (fish % 10) ) {
       moveRight(fish, shm);
+      printf("MOvingleft \n");
     }
     else if ((closestPellet % 10) < (fish % 10)) {
       moveLeft(fish, shm);
+      printf("Moving right \n");
     }
+    else{
+      printf("NOt moving \n");
+    }
+    // moveRight(fish,shm);
     sleep(1);
   }
   shmdt(shm);
@@ -60,11 +66,11 @@ int findClosestPellet(int* shm) {
 
   //Finding smallest distance
   for (int i = 2; i < 20; i++) {
-    if (distance[i] <= minimumDistance) {
+    if (distance[i] < minimumDistance) {
       closestPellet = i;
     }
   }
-  printf("Closest pellet %d \n", closestPellet);
+  // printf("Closest pellet %d \n", closestPellet);
   return shm[closestPellet];
 }
 
@@ -88,5 +94,6 @@ void moveRight(int fish, int* shm) {
 
 void handler(int num) {
 	// perror(" Interrupt signal is pressed!! \n");
+  shmdt(shm);
 	exit(1);
 }

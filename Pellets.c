@@ -6,6 +6,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
+#include "include.h"
+
+#define SHM_SIZE 1000
 
 void handler(int);
 void eatPellet();
@@ -14,21 +18,21 @@ void missPellet();
 int main(int argc, char* argv[]) {
   signal(SIGINT, handler);
 
-  key_t key = ftok("SwimMill.c", 'b');
-  int shmid = shmget(key, 1024, IPC_CREAT|0666);
-  int *shm = shmat(shmid, NULL, 0);
+  attachSharedMemory();
+  srand(time(NULL));
 
   int i = 1; // 1 - 19 are pellets
-  printf("%d \n", shm[1]);
   for (; i < 20; i++) {
     int pelletPosition = rand() % 9 ; // random number from 0 - 9
     if (shm[i] == -1){
-      printf("hello %d \n", pelletPosition);
+      // printf("hello %d \n", pelletPosition);
       shm[i] = pelletPosition;
     }
     break;
   }
   while(1) {
+    printf("helloasd %d \n", shm[i]);
+    printf("i: %d \n", i);
     if (shm[i] < 90) {
       shm[i] += 10;
     }
@@ -64,6 +68,6 @@ void missPellet() {
 }
 
 void handler(int num) {
-	// perror(" Interrupt signal is pressed!! \n");
+	shmdt(shm);
 	exit(1);
 }

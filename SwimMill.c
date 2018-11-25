@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include "include.h"
 
 #define SHM_SIZE 1000
 
@@ -25,101 +26,95 @@ TODO: SwimMIll FIRST, draw and get everything working
 
 void printGrid(int*);
 void handler(int);
+void killProgram(pid_t, pid_t, int*, int);
+pid_t fish;
+pid_t pellet;
 
 int main(int argc, char* argv[]) {
 
-	key_t key;
-	int shmid;
-	int *shm;
 	int timer = 0;
-	int fish = 0;
-	int pellet[20];
-
+	attachSharedMemory(); // from include.h
 	signal(SIGINT, handler);
 
-	key = ftok("SwimMill.c", 'b'); //generate random ke
-	shmid = shmget(key, SHM_SIZE, IPC_CREAT|0666);
-	shm = shmat(shmid, NULL, 0); // Attach
 
 	// Initializing the shared memory to prevent segmentation fault
-	for (int i = 0; i < SHM_SIZE; i++){
-		shm[i] = -1;
-	}
-
-	int index = 1;
+	// for (int i = 0; i < SHM_SIZE; i++){
+	// 	shm[i] = -1;
+	// }
+	srand(time(NULL));
 	fish = fork();
-	
+
 	if (fish == -1) {
-		perror("Fish fork failed");
+		perror("Fish fork failed1");
 		exit(1);
 	}	else if (fish == 0) {
 		execv("Fish", argv);
 		perror("Fish exec failed");
 		exit(1);
 	}
-
 	while(timer <= 30){
-		pellet[index] = fork();
-		if (pellet[index] == -1) {
-			perror("Pellet Fork failed");
+		pellet = fork();
+		if (pellet == -1) {
+			perror("Pellet Fork failed1");
 			exit(1);
-		}	else if (pellet[index] == 0) {
+		}	else if (pellet == 0) {
 			execv("Pellets", argv);
 			perror("Pellets Fork failed");
 			exit(1);
 		}
-		sleep(1); // Slow process down
 		printGrid(shm);
-		printf("\n");
-
+		sleep(1);
+		printf("Timer: %d\n", timer);
 		timer++;
-		index++;
-
 	}
 
-	kill(fish,SIGUSR1);
-	for(int i = 0; i < 20; i++) {
-		kill(pellet[index], SIGUSR1);
-	}
-
-	sleep(10);
-	shmdt(shm);
-	shmctl(shmid, IPC_RMID, NULL);
-	printf("Program finished! \n");
+	killProgram(fish, pellet, shm, shmid);
 	getchar(); // Pause consol
 	return 0;
 }
 
+
 void printGrid(int* shm) {
 	int row = 10;
 	int column = 10;
-	char stream[row][column]; //2D Dimensional array, fish can only move last row of 2d
-
+	char (*stream)[row][column]; //2D Dimensional array, fish can only move last row of 2d
 
 	//Initializing grid first
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
-			stream[i][j] = '~';
+			(*stream)[i][j] = '~';
 		}
 	}
-
-	//Printing out grid with fish and
-	// printf("Shm2 is: %d \n", shm[1] );
+	printf("Fish: %d \n", shm[0]);
+	printf("Shm2 is: %d \n", shm[1] );
+	for (int k = 1; k < 20; k++) {
+		(*stream)[shm[k]/10][shm[k]%10] = 'O'; // pellets
+	}
+	(*stream)[shm[0]/10][shm[0]%10] = 'Y'; // Fish
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < column; j++) {
-			// stream[i][j] = '~'; // water
-			for (int k = 1; k < 20; k++) {
-				stream[shm[k]/10][shm[k]%10] = 'O'; // pellets
-			}
-			stream[shm[0]/10][shm[0]%10] = 'Y'; // Fish
-			printf("%c ", stream[i][j]	 );
+			printf("%c ", (*stream)[i][j]);
 		}
 		printf("\n");
 	}
 
 }
 
-void handler(int num) {
+void killProgram(pid_t fish, pid_t pellet, int *shm, int shmid) {
+	kill(fish,SIGUSR1);
+	kill(pellet, SIGUSR1);
+	sleep(5);
+	shmdt(shm);
+	shmctl(shmid, IPC_RMID, NULL);
+	printf("Program finished! \n");
+}
+
+void handler(int num ) {
+	kill(fish,SIGUSR1);
+	kill(pellet, SIGUSR1);
+	shmdt(shm);
+	shmctl(shmid, IPC_RMID, NULL);
 	perror(" Interrupt signal is pressed!! \n");
+
 	exit(1);
 }
