@@ -2,14 +2,15 @@
 // Create pellets at random intervals, from 0x80
 // Eating --> Get rid of most significant bit
 // Use shared memory for fish and pellet position only
-#include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+// #include <stdio.h>
+// #include <sys/ipc.h>
+// #include <sys/shm.h>
+// #include <sys/types.h>
+// #include <signal.h>
+// #include <stdlib.h>
+// #include <time.h>
+// #include <unistd.h>
+#include <semaphore.h>
 #include "include.h"
 
 #define SHM_SIZE 1000
@@ -41,14 +42,14 @@ int main(int argc, char* argv[]) {
 	// for (int i = 0; i < SHM_SIZE; i++){
 	// 	shm[i] = -1;
 	// }
-	srand(time(NULL));
+
 	fish = fork();
 
 	if (fish == -1) {
 		perror("Fish fork failed1");
 		exit(1);
 	}	else if (fish == 0) {
-		execv("Fish", argv);
+		execl("Fish", "Fish", NULL);
 		perror("Fish exec failed");
 		exit(1);
 	}
@@ -58,7 +59,7 @@ int main(int argc, char* argv[]) {
 			perror("Pellet Fork failed1");
 			exit(1);
 		}	else if (pellet == 0) {
-			execv("Pellets", argv);
+			execl("./Pellets", "Pellets", NULL);
 			perror("Pellets Fork failed");
 			exit(1);
 		}
@@ -85,8 +86,8 @@ void printGrid(int* shm) {
 			(*stream)[i][j] = '~';
 		}
 	}
-	printf("Fish: %d \n", shm[0]);
-	printf("Shm2 is: %d \n", shm[1] );
+	// printf("Fish: %d \n", shm[0]);
+	// printf("Shm2 is: %d \n", shm[1] );
 	for (int k = 1; k < 20; k++) {
 		(*stream)[shm[k]/10][shm[k]%10] = 'O'; // pellets
 	}

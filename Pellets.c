@@ -1,11 +1,11 @@
 // Multiple pellets
 //Process ID, position, eaten/misse
-#include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
+// #include <stdio.h>
+// #include <sys/ipc.h>
+// #include <sys/shm.h>
+// #include <unistd.h>
+// #include <stdlib.h>
+// #include <signal.h>
 #include <time.h>
 #include "include.h"
 
@@ -23,11 +23,11 @@ int main(int argc, char* argv[]) {
 
   int i = 1; // 1 - 19 are pellets
   for (; i < 20; i++) {
-    int pelletPosition = rand() % 9 ; // random number from 0 - 9
-    if (shm[i] == -1){
-      // printf("hello %d \n", pelletPosition);
-      shm[i] = pelletPosition;
-    }
+    shm[i] = rand() % 9 ; // random number from 0 - 9
+    // if (shm[i] == -1){
+    //   // printf("hello %d \n", pelletPosition);
+    //   shm[i] = pelletPosition;
+    // }
     break;
   }
   while(1) {
@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
     sleep(1);
   }
   shmdt(shm);
+
   return 0;
 }
 
