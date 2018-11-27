@@ -1,11 +1,5 @@
 // Multiple pellets
 //Process ID, position, eaten/misse
-// #include <stdio.h>
-// #include <sys/ipc.h>
-// #include <sys/shm.h>
-// #include <unistd.h>
-// #include <stdlib.h>
-// #include <signal.h>
 #include <time.h>
 #include "include.h"
 
@@ -19,20 +13,21 @@ int main(int argc, char* argv[]) {
   signal(SIGINT, handler);
 
   attachSharedMemory();
-  srand(time(NULL));
 
   int i = 1; // 1 - 19 are pellets
   for (; i < 20; i++) {
+    srand(time(NULL));
     shm[i] = rand() % 9 ; // random number from 0 - 9
-    // if (shm[i] == -1){
-    //   // printf("hello %d \n", pelletPosition);
-    //   shm[i] = pelletPosition;
-    // }
+    // printf("shm[i] is %d \n" , shm[i]);
+    // printf("i: %d \n", i);
     break;
   }
+  sleep(1);
+
+
   while(1) {
-    printf("helloasd %d \n", shm[i]);
-    printf("i: %d \n", i);
+    // printf("helloasd %d \n", shm[i]);
+    sleep(1);
     if (shm[i] < 90) {
       shm[i] += 10;
     }
@@ -49,26 +44,28 @@ int main(int argc, char* argv[]) {
       break;
     }
     // printf("%d\n",shm[i] );
+    // sleep(1);
     i++;
-    sleep(1);
   }
+
+
   shmdt(shm);
 
   return 0;
 }
 
 void eatPellet() {
-  printf("Pellet eaten!");
+  printf("Pellet eaten! \n");
   printf("PID: %d \n", getpid());
 
 }
 
 void missPellet() {
-  printf("Pellet missed");
+  printf("Pellet missed \n");
   printf("PID: %d \n", getpid());
 }
 
 void handler(int num) {
-	shmdt(shm);
-	exit(1);
+  shmdt(shm);
+  exit(1);
 }

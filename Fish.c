@@ -2,13 +2,7 @@
 // Scan the entire array, and focus on one pellet
 // Arrange itself
 
-#include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 #include <math.h>
-#include <unistd.h>
-#include <signal.h>
-#include <stdlib.h>
 #include "include.h"
 
 #define SHM_SIZE 1000
@@ -30,14 +24,12 @@ int main(int argc, char* argv[]) {
     int closestPellet = shm[findClosestPellet(shm)];
     if ((closestPellet % 10) > (fish % 10) ) {
       moveRight(fish, shm);
-      printf("MOvingleft \n");
     }
     else if ((closestPellet % 10) < (fish % 10)) {
       moveLeft(fish, shm);
-      printf("Moving right \n");
     }
     else{
-      printf("NOt moving \n");
+
     }
     // moveRight(fish,shm);
     sleep(1);
@@ -71,7 +63,7 @@ int findClosestPellet(int* shm) {
     }
   }
   // printf("Closest pellet %d \n", closestPellet);
-  return shm[closestPellet];
+  return closestPellet;
 }
 
 void moveLeft(int fish, int* shm) {
@@ -93,7 +85,7 @@ void moveRight(int fish, int* shm) {
 }
 
 void handler(int num) {
-	// perror(" Interrupt signal is pressed!! \n");
+
   shmdt(shm);
 	exit(1);
 }

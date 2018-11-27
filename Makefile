@@ -1,7 +1,7 @@
 all: SwimMill.o Fish.o Pellets.o
 
 SwimMill.o: SwimMill.c
-	gcc -o SwimMill SwimMill.c -I -lm.
+	gcc -o SwimMill SwimMill.c -I -lm -pthread
 
 Fish.o: Fish.c
 	gcc -o Fish Fish.c -lm -I.
