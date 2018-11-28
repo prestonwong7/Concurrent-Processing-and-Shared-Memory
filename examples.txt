@@ -1,0 +1,155 @@
+Fish Position: -1 
+Pellet Position: -1 
+Pellet eaten! 
+PID: 6692 
+Timer: 0
+Fish Position: 94 
+Pellet Position: 2 
+Pellet missed! 
+PID: 6692 
+Timer: 1
+Fish Position: 95 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 2
+Fish Position: 94 
+Pellet Position: 10 
+Pellet missed! 
+PID: 6692 
+Timer: 3
+Fish Position: 94 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 4
+Fish Position: 93 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 5
+Fish Position: 92 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 6
+Fish Position: 93 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 7
+Fish Position: 92 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 8
+Fish Position: 91 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 9
+Fish Position: 91 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 10
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 11
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 12
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 13
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 14
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 15
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 16
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 17
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 18
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 19
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 20
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 21
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 22
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 23
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 24
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 25
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 26
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 27
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 28
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 29
+Fish Position: 90 
+Pellet Position: 0 
+Pellet missed! 
+PID: 6692 
+Timer: 30

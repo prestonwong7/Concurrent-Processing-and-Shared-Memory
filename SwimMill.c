@@ -3,6 +3,7 @@
 // Eating --> Get rid of most significant bit
 // Use shared memory for fish and pellet position only
 #include <semaphore.h>
+#include <time.h>
 #include "include.h"
 
 #define SHM_SIZE 1000
@@ -24,7 +25,7 @@ pid_t fish;
 pid_t pellet;
 
 int main(int argc, char* argv[]) {
-
+	fp = fopen("examples.txt", "w");
 	int timer = 0;
 	attachSharedMemory(); // from include.h
 	signal(SIGINT, handler);
@@ -44,6 +45,8 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < SHM_SIZE; i++){
 		shm[i] = -1;
 	}
+	shm[20] = 0;
+	// printf("HOwm any times \n");
 
 	fish = fork();
 
@@ -70,11 +73,13 @@ int main(int argc, char* argv[]) {
 		printGrid(shm);
 		sleep(1);
 		printf("Timer: %d\n", timer);
+		fprintf(fp, "Timer: %d\n", timer);
 		timer++;
 		sem_post(&sem);
 	}
 
 	killProgram(fish, pellet, shm, shmid);
+	fclose(fp);
 	getchar(); // Pause consol
 	return 0;
 }
@@ -91,8 +96,10 @@ void printGrid(int* shm) {
 			stream[i][j] = '~';
 		}
 	}
-	printf("Fish: %d \n", shm[0]);
-	printf("Pellet is: %d \n", shm[1] );
+	printf("Fish Position: %d \n", shm[0]);
+	fprintf(fp,"Fish Position: %d \n", shm[0]);
+	printf("Pellet Position: %d \n", shm[1] );
+	fprintf(fp,"Pellet Position: %d \n", shm[1] );
 	for (int k = 1; k < 20; k++) {
 		stream[shm[k]/10][shm[k]%10] = 'O'; // pellets
 	}
@@ -102,6 +109,25 @@ void printGrid(int* shm) {
 			printf("%c ", stream[i][j]);
 		}
 		printf("\n");
+	}
+
+	if (shm[1] == shm[0]) {
+		fprintf(fp, "Pellet eaten! \n");
+	  // fprintf(fp, "Pellet eaten! \n");
+	  fprintf(fp,"PID: %d \n", getpid());
+		// fprintf(fp, "Position: %d\n", shm[i] );
+		shm[1] = -1;
+
+		// EATEN and KILL
+	}
+	else{
+		// KIll process, terminate
+		fprintf(fp,"Pellet missed! \n");
+	  // fprintf(fp, "Pellet eaten! \n");
+	  fprintf(fp,"PID: %d \n", getpid());
+		// fprintf(fp,"Position: %d\n", shm[i] );
+		shm[1] = 0;
+
 	}
 
 }

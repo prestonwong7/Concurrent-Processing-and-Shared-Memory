@@ -11,6 +11,8 @@ int shmid;
 int *shm;
 pid_t fish;
 pid_t pellet;
+static int pelletCount;
+FILE *fp;
 
 
 void attachSharedMemory() {
